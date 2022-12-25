@@ -1,15 +1,16 @@
 import sqlite3
 import os
 from datetime import date, timezone
-import logging
+import sys
 class DBManager():
     def __init__(self):
         self.conn = None
         self.c = None
+        self.is_db_conn_open = False
         self.active_user = None
         self.active_course = None
         self.active_lesson = None
-        self.table_names = ('member', 'teacher', 'student', 'course', 'lesson', 'attendance')
+        self.table_names = ('member', 'teacher', 'student', 'course', 'lesson', 'attendance', 'course_student')
         self.last_insert_rowid_dict = {}
         self.connect_db()
         for table in self.table_names:
@@ -23,14 +24,23 @@ class DBManager():
         self.disconnect_db()
 
     def connect_db(self):
-        path = os.path.dirname(os.path.realpath(__file__))
-        self.conn = sqlite3.connect(os.path.join(path, 'attendance_system.db'), 
-                                    detect_types=sqlite3.PARSE_DECLTYPES|
-                                    sqlite3.PARSE_COLNAMES)
-        self.c = self.conn.cursor()
+        try:
+            path = os.path.dirname(os.path.realpath(__file__))
+            self.conn = sqlite3.connect(os.path.join(path, 'attendance_system.db'), 
+                                        detect_types=sqlite3.PARSE_DECLTYPES|
+                                        sqlite3.PARSE_COLNAMES)
+            self.c = self.conn.cursor()
+            self.is_db_conn_open = True
+        except Exception as e:
+            print('db_manager: Could not open a db connection')
+        
     def disconnect_db(self):
-        self.conn.commit()
-        self.conn.close()
+        try:
+            self.conn.commit()
+            self.conn.close()
+            self.is_db_conn_open = False
+        except Exception as e:
+            print('db_manager: Could not commit changes and close the db connection')
 
     def user_login(self, username, password):
         return_value = None
@@ -46,10 +56,23 @@ class DBManager():
             print(userID)
             self.active_user = userID
             self.c.execute('''SELECT * FROM teacher 
-                                WHERE id =:userID''',{'userID':userID})
-            return_value = self.c.fetchall()
+                                WHERE id =:userID''',
+                                {'userID':userID})
+            return_value = self.c.fetchone()
         else:
             return_value = None
+        self.disconnect_db()
+        return return_value
+    def get_user_courses(self):
+        return_value = None
+        if self.active_user is None:
+            print('db_manager: No active_user')
+            return return_value
+        self.connect_db()
+        self.c.execute('''SELECT * FROM course 
+                            WHERE teacherid = :id''', 
+                            {'id': self.active_user})
+        return_value = self.c.fetchall()
         self.disconnect_db()
         return return_value
     def delete_row(self, table_name, row_id):
@@ -113,14 +136,6 @@ class DBManager():
         return query_result
     def add_new_user(self, username, password, firstname, lastname, tc):
         self.connect_db()
-        self.c.execute('''SELECT id FROM member
-                            WHERE username=:username''', {'username': username})
-        query_result = self.c.fetchone()
-        if query_result is not None:
-            
-            print('Username is not unique')
-            self.disconnect_db()
-            return False
         self.increment_last_row_dict('teacher')
         self.increment_last_row_dict('member')
 
@@ -149,6 +164,7 @@ class DBManager():
             print('No active user')
             return False
         self.connect_db()
+        return_value = False
         try:
             self.increment_last_row_dict('course')
             self.c.execute('''INSERT INTO course VALUES
@@ -168,13 +184,15 @@ class DBManager():
                                 'total_lesson_count': total_lesson_count})
             
             print('Course added')
+            return_value = True
         except sqlite3.Error as err:
-            #print(err.message)
-            #logging.error(err.__cause__)
             print('Could not add course')
+            self.decrement_last_row_dict('course')
+            return_value = False
         finally:
             self.disconnect_db()
-        return True
+            return return_value
+        
     def find_student(self, tc):
         if self.active_user is None:
             print('No active user')
@@ -192,69 +210,77 @@ class DBManager():
         return query_result
     def select_course(self, course_id):
         self.active_course = course_id
-    def add_new_student(self, firstname, lastname, studentid, tc):
+    def add_new_student(self, studentid, firstname, lastname, tc):
         if self.active_user is None:
             print('No active user')
             return False
-        if self.active_course is None:
-            print('No course has been selected')
-            return False
         self.connect_db()
-        self.c.execute('''SELECT EXISTS
-                            (SELECT 1 FROM student
-                            WHERE tc = :tc) ''', {'tc': tc})
-        query_result = self.c.fetchone()
-        if query_result is True:
-            print('This student already exists')
-            return False
-        self.increment_last_row_dict('student')
+        try:
 
-        self.c.execute('''INSERT INTO student VALUES
-                            (:id, 
-                            :firstname, 
-                            :lastname,
-                            :studentid,
-                            :tc)''', 
-                            {'id': self.last_insert_rowid_dict['student'], 
-                            'firstname': firstname,
-                            'lastname': lastname, 
-                            'studentid': studentid,
-                            'tc': tc})
-        self.disconnect_db()
+            self.increment_last_row_dict('student')
+
+            self.c.execute('''INSERT INTO student VALUES
+                                (:id,
+                                :studentid, 
+                                :firstname, 
+                                :lastname,
+                                :tc)''', 
+                                {'id': self.last_insert_rowid_dict['student'],
+                                'studentid': studentid, 
+                                'firstname': firstname,
+                                'lastname': lastname, 
+                                'tc': tc})
+        except Exception as e:
+            print(sys._getframe().f_code.co_name + ': Could not insert student with id ' + studentid)
+        finally:
+            self.disconnect_db()
     def add_student_to_course(self, studentid, courseid):
         return
-    # def add_new_entity(self, table_name: str, entity_values: dict):
-    #     if self.active_user is None:
-    #         print('No active user')
-    #         return False
-    #     if table_name not in self.table_names:
-    #         print('Table does not exist')
-    #         return False
-    #     self.connect_db()
-        
-
-    #     self.increment_last_row_dict[table_name]
-
-    #     value_placeholder = '('
-    #     for count, key in enumerate(entity_values):
-    #         if count < len(entity_values) - 1:
-    #             value_placeholder = value_placeholder + ':' + key + ','
-    #         else:
-    #             value_placeholder = value_placeholder + ':' + key + ')'
-    #     query_string = 'INSERT INTO ' + table_name + ' VALUES' + value_placeholder
-        
-    #     self.c.execute(query_string, entity_values)
-        
-    #     self.disconnect_db()
-    #     print('Course added')
-    #     return True
-    def check_if_unique(self, table_name, id):
-        return
-    def increment_last_row_dict(self, table_name):
-        if self.last_insert_rowid_dict[table_name] is not None:
-            self.last_insert_rowid_dict[table_name] += 1
+    def get_row_from_id(self, table_name, row_id):
+        return_value = None
+        if self.is_db_conn_open:
+            self.c.execute('''SELECT * FROM {}
+                                WHERE id = :row_id'''.format(table_name), 
+                                {'row_id': row_id})
+            return_value = self.c.fetchall()
+        else: return_value = None
+        return return_value
+    def is_unique(self, table_name, id):
+        if table_name not in self.table_names:
+            print('is_unique: that table does not exist')
+            return False
+        return_value = False
+        self.connect_db()
+        self.c.execute('''SELECT * FROM {}'''.format(table_name))
+        print(self.c.fetchall())
+        print(id)
+        self.c.execute('''SELECT EXISTS
+                            (SELECT 1 FROM {}
+                            WHERE id = :row_id)'''.format(table_name), 
+                                {'row_id': id})
+        query_result = self.c.fetchone()[0]
+        print(query_result)
+        self.disconnect_db()
+        if query_result:
+            print('is_unique: this row already existed')
+            return_value = False
         else:
+            print('is_unique: this row does not exist')
+            return_value = True
+        return return_value
+        
+    def increment_last_row_dict(self, table_name):
+        if self.last_insert_rowid_dict[table_name] is None:
             self.last_insert_rowid_dict[table_name] = 1
+        else:
+            self.last_insert_rowid_dict[table_name] += 1
+    def decrement_last_row_dict(self, table_name):
+        if self.last_insert_rowid_dict[table_name] is None:
+            return
+        if self.last_insert_rowid_dict[table_name] - 1 == 0:
+            self.last_insert_rowid_dict[table_name] = None
+        else:
+            self.last_insert_rowid_dict[table_name] -= 0
 
 if __name__ == '__main__':
     db = DBManager()

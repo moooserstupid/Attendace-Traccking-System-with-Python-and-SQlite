@@ -3,10 +3,6 @@ class Record():
     def __init__(self):
         self.id = None
         return
-    def set_attributes(self):
-        return
-    def get_attributes(self):
-        return
 
 class Member(Record):
 
@@ -64,15 +60,17 @@ class Teacher(Record):
         self.firstname = firstname
         self.lastname = lastname
         self.tc = tc
-    def set_attributes(self, teacher_info, course_info):
-        self.id = teacher_info[0][0]
-        self.firstname = teacher_info[0][1]
-        self.lastname = teacher_info[0][2]
-        self.tc = teacher_info[0][3]
+    def set_teacher_attributes(self, teacher_info_list):
+        self.id = teacher_info_list[0]
+        self.firstname = teacher_info_list[1]
+        self.lastname = teacher_info_list[2]
+        self.tc = teacher_info_list[3]
 
-        for course in course_info:
+        
+    def set_course_attributes(self, course_info_list):
+        for course in course_info_list:
             new_course = Course()
-            new_course.set_attr(course)
+            new_course.set_attributes(course)
             self.course_list[new_course.id] = new_course
 
 class Course(Record):
@@ -108,7 +106,6 @@ class Student(Record):
     def __init__(self):
         self.firstname = None
         self.lastname = None
-        self.student_id = None
         self.tc = None
         self.course_list = {}
     def set_attributes(self):
