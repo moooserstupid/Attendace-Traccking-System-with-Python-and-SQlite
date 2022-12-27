@@ -3,10 +3,6 @@ class Record():
     def __init__(self):
         self.id = None
         return
-    def set_attributes(self):
-        return
-    def get_attributes(self):
-        return
 
 class Member(Record):
 
@@ -64,15 +60,17 @@ class Teacher(Record):
         self.firstname = firstname
         self.lastname = lastname
         self.tc = tc
-    def set_attributes(self, teacher_info, course_info):
-        self.id = teacher_info[0][0]
-        self.firstname = teacher_info[0][1]
-        self.lastname = teacher_info[0][2]
-        self.tc = teacher_info[0][3]
+    def set_teacher_attributes(self, teacher_info_list):
+        self.id = teacher_info_list[0]
+        self.firstname = teacher_info_list[1]
+        self.lastname = teacher_info_list[2]
+        self.tc = teacher_info_list[3]
 
-        for course in course_info:
+        
+    def set_course_attributes(self, course_info_list):
+        for course in course_info_list:
             new_course = Course()
-            new_course.set_attr(course)
+            new_course.set_attributes(course)
             self.course_list[new_course.id] = new_course
 
 class Course(Record):
@@ -92,13 +90,28 @@ class Course(Record):
         self.start_date = course_info[4]
         self.end_date = course_info[5]
         self.total_lesson_count = course_info[6]
+    def get_attributes(self):
+        if self.id is None:
+            print('get_attributes: course attributes not set')
+            return []
+        return_list = []
+        return_list.append(self.id)
+        return_list.append(self.name)
+        return_list.append(self.teacherid)
+        return_list.append(self.description)
+        return_list.append(self.start_date)
+        return_list.append(self.end_date)
+        return_list.append(self.total_lesson_count)
+        return return_list
+        
+
 class Lesson(Record):
 
     def __init__(self):
         self.date = None
         self.courseid = None
 
-class Attendace(Record):
+class Attendance(Record):
     def __init__(self):
 
         self.lessonid = None
@@ -108,10 +121,15 @@ class Student(Record):
     def __init__(self):
         self.firstname = None
         self.lastname = None
-        self.student_id = None
         self.tc = None
         self.course_list = {}
     def set_attributes(self):
         return
     def add_course(self, course):
         self.course_list[course.id] = course
+
+class Course_Student(Record):
+    def __init__(self):
+        self.courseid = None
+        self.studentid = None
+    
