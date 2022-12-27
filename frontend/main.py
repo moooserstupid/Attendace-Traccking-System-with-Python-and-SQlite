@@ -12,7 +12,6 @@ from MainWindow import Ui_MainWindow
 from Dashboard import Ui_DashboardWindow
 
 
-from backend.api_backend import BackendAPI
 
 
 class MainWindow(QMainWindow):
@@ -21,7 +20,6 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.api = RequestSendAPI()
-        self.backend = BackendAPI()
 
         self.ui.setupUi(self)
 
@@ -43,11 +41,15 @@ class MainWindow(QMainWindow):
             print("username: ", username)
             print("password: ", password)
             self.api.send('Q1,'+username+','+password)
+            print("amq")
+
             server_reply = self.api.receive()
+            print(server_reply)
             if server_reply[0] == "R1":
                 if server_reply[1] == 'None':
                     print("Login Failed ")
                 else:
+                    print("success")
                     mainWindow.close()
                     dashboard_window = DashboardWindow(server_reply)
 

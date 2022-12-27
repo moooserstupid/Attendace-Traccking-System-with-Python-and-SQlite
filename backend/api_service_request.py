@@ -6,18 +6,20 @@ class ServiceRequestAPI():
     def __init__(self):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.REP)
-        self.socket.bind("tcp://*:5556")
+        self.socket.bind("tcp://*:5555")
         self.backend = api_backend.BackendAPI()
     def send(self, message):
+        message = message.encode('ascii')
         server.socket.send(message)
     def recieve(self):
-        return server.socket.recv()
+        return server.socket.recv_string()
 
 
 if __name__ == '__main__':
     server = ServiceRequestAPI()
     while True:
-        message = server.recv()
+        print("Server Running")
+        message = server.recieve()
         print("Received request: %s" % message)
         #  Do some 'work'
         time.sleep(1)
@@ -28,8 +30,11 @@ if __name__ == '__main__':
         if message_tokens[0] == 'Q1':
             username = message_tokens[1]
             password = message_tokens[2]
-            reply = server.backend.authenticate_login(username, password)
-            server.send(b'R1,' + reply)
+            reply = server.backend.authenticate_login([username, password])
+            if reply is None:
+                server.send('R1,None')
+            else:
+                server.send('R1,' + reply.__repr__())
         elif message_tokens[0] == 'Q2':
             '''
             sign up

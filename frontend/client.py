@@ -2,7 +2,7 @@ import zmq
 context = zmq.Context()
 print("Connecting to hello world server")
 socket = context.socket(zmq.REQ)
-socket.connect("tcp://193.255.169.20:5556")
+socket.connect("tcp://localhost:5555")
 
 for request in range(10):
     print("Sending request %s" % request)
