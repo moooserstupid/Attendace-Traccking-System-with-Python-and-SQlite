@@ -1,4 +1,3 @@
-from backend.api_request_service import ServiceRequestAPI
 import zmq
 class RequestSendAPI:
     def __init__(self):
@@ -7,7 +6,7 @@ class RequestSendAPI:
         print("Connecting to server")
         self.socket = self.context.socket(zmq.REQ)
         self.socket.connect("tcp://193.255.169.20:5556")
-        self.service = ServiceRequestAPI()
+
     def send(self, msg):
         self.socket.send(bin(msg))
 
