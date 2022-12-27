@@ -52,7 +52,7 @@ def create_student_course_table():
                         courseid INTEGER NOT NULL, 
                         studentid INTEGER NOT NULL,
                         CONSTRAINT course_student_pk PRIMARY KEY (id),
-                        CONSTRAINT sc_course_fk FOREIGN KEY(courseid)
+                        CONSTRAINT sc_course_fk FOREIGN KEY(courseid) 
                             REFERENCES course(id),
                         CONSTRAINT sc_student_fk FOREIGN KEY(studentid)
                             REFERENCES student(id))''')
@@ -77,10 +77,11 @@ def create_attendance_table():
                         CONSTRAINT attendance_student_fk FOREIGN KEY(studentid)
                             REFERENCES student(id))''')
 
-# create_login_table()
-# create_teacher_table()
-# create_course_table()
-# create_lesson_table()
-# create_student_table()
-# create_attendance_table()
+
+create_login_table()
+create_teacher_table()
+create_course_table()
+create_lesson_table()
+create_student_table()
+create_attendance_table()
 create_student_course_table()
