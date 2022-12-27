@@ -6,6 +6,7 @@ socket = context.socket(zmq.REP)
 socket.bind("tcp://*:5555")
 
 while True:
+    print("Server Running")
     #  Wait for next request from client
     message = socket.recv()
     print("Received request: %s" % message)
