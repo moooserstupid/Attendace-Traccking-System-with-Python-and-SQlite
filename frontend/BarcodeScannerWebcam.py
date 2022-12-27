@@ -5,8 +5,8 @@ class BarcodeScanner:
     def __int__(self):
         self.data = ''
 
-    def Scan(self):
-        scannedIdNumbers = []
+    def scan_tc(self):
+        scanned_id_numbers = []
         cap = cv2.VideoCapture(0)
         while True:
             _, img = cap.read()
@@ -16,28 +16,27 @@ class BarcodeScanner:
             if decoded_objects:
                 for obj in decoded_objects:
                     data = str(obj[0])[2:-1]
-                    if not self.Search(scannedIdNumbers, data) and len(data) == 11 and data.isdigit():
+                    if not self.search(scanned_id_numbers, data) and len(data) == 11 and data.isdigit():
                         print("Scanned TC number:", data)
-                        scannedIdNumbers.append(data)
+                        scanned_id_numbers.append(data)
 
             # display the result
             cv2.imshow("QRCodeScanner", img)
-            if cv2.waitKey(1) == ord("q"):
+            if cv2.waitKey(1) == ord("\r"):
                 break
         cap.release()
         cv2.destroyAllWindows()
-        return scannedIdNumbers
+        return scanned_id_numbers
 
-    def Search(self, list, val):
+    def search(self, list, val):
         for item in list:
             if val == item:
                 return True
         return False
 
 
-
 if __name__ == "__main__":
     scan = BarcodeScanner()
-    print(scan.Scan())
+    print(scan.scan_tc())
 
 

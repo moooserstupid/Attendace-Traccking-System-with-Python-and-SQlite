@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>607</height>
+    <width>1097</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Attendance System Dashboard</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -100,7 +100,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="login_label">
+              <widget class="QLabel" name="page_name_label">
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
@@ -128,10 +128,16 @@
                <property name="text">
                 <string>Dashboard</string>
                </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="add_course_menu_btn">
+              <widget class="QPushButton" name="courses_menu_btn">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -142,12 +148,15 @@
                 <string notr="true"/>
                </property>
                <property name="text">
-                <string>Add Course</string>
+                <string>Courses</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="add_lesson_menu_btn">
+              <widget class="QPushButton" name="lessons_menu_btn">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -155,12 +164,15 @@
                 </size>
                </property>
                <property name="text">
-                <string>Add Lesson</string>
+                <string>Lessons</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="add_student_menu_btn">
+              <widget class="QPushButton" name="students_menu_btn">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -168,20 +180,10 @@
                 </size>
                </property>
                <property name="text">
-                <string>Add Student</string>
+                <string>Students</string>
                </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="add_student_to_course_menu_btn">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>40</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Add Student To Course</string>
+               <property name="checkable">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -199,6 +201,9 @@
                <property name="text">
                 <string>Take Attendance</string>
                </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
              <item>
@@ -211,6 +216,25 @@
                </property>
                <property name="text">
                 <string>Teacher Info</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="sign_out_btn">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>40</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Sign Out</string>
+               </property>
+               <property name="checkable">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -232,49 +256,58 @@
           <item>
            <widget class="QStackedWidget" name="stackedWidget">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="dashboard_page">
-             <layout class="QVBoxLayout" name="verticalLayout_28">
+             <layout class="QVBoxLayout" name="verticalLayout_28"/>
+            </widget>
+            <widget class="QWidget" name="courses_page">
+             <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QTreeWidget" name="treeWidget">
+               <widget class="QTreeWidget" name="courses_treeWidget">
                 <column>
                  <property name="text">
-                  <string>Name</string>
+                  <string>Course Name</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string>Surname</string>
+                  <string>Teacher ID</string>
                  </property>
                 </column>
                 <column>
                  <property name="text">
-                  <string>Student No</string>
+                  <string>Descrition</string>
                  </property>
                 </column>
-                <item>
+                <column>
                  <property name="text">
-                  <string>Mohammad</string>
+                  <string>Start Date</string>
                  </property>
+                </column>
+                <column>
                  <property name="text">
-                  <string>Salah</string>
+                  <string>End Date</string>
                  </property>
+                </column>
+                <column>
                  <property name="text">
-                  <string>170420991</string>
+                  <string>Count Of Lessons</string>
                  </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Ali</string>
-                 </property>
-                 <property name="text">
-                  <string>Ashgar</string>
-                 </property>
-                 <property name="text">
-                  <string>170420234</string>
-                 </property>
-                </item>
+                </column>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignRight">
+               <widget class="QPushButton" name="go_to_add_course_btn">
+                <property name="minimumSize">
+                 <size>
+                  <width>250</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Add Course</string>
+                </property>
                </widget>
               </item>
              </layout>
@@ -386,10 +419,20 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="add_lesson_page">
+            <widget class="QWidget" name="lessons_page">
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
                <layout class="QGridLayout" name="gridLayout_4">
+                <item row="1" column="1">
+                 <widget class="QComboBox" name="course_id_comboBox">
+                  <property name="maximumSize">
+                   <size>
+                    <width>250</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
                 <item row="5" column="1">
                  <widget class="QPushButton" name="add_lesson_btn">
                   <property name="text">
@@ -410,25 +453,290 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_21">
-                  <property name="text">
-                   <string>Course Name:</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="1">
                  <widget class="QDateEdit" name="lesson_date_dateEdit"/>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QComboBox" name="course_name_comboBox">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_21">
+                  <property name="text">
+                   <string>Course ID:</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QTreeWidget" name="lessons_treeWidget">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="tabKeyNavigation">
+                 <bool>false</bool>
+                </property>
+                <property name="dragEnabled">
+                 <bool>false</bool>
+                </property>
+                <property name="dragDropOverwriteMode">
+                 <bool>false</bool>
+                </property>
+                <property name="alternatingRowColors">
+                 <bool>true</bool>
+                </property>
+                <property name="textElideMode">
+                 <enum>Qt::ElideRight</enum>
+                </property>
+                <property name="verticalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerItem</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="animated">
+                 <bool>false</bool>
+                </property>
+                <property name="allColumnsShowFocus">
+                 <bool>false</bool>
+                </property>
+                <property name="wordWrap">
+                 <bool>false</bool>
+                </property>
+                <property name="headerHidden">
+                 <bool>false</bool>
+                </property>
+                <column>
+                 <property name="text">
+                  <string>Lesson Date</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Course ID</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Course Name</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Teacher ID</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Teacher Name</string>
+                 </property>
+                </column>
+                <item>
+                 <property name="text">
+                  <string>26/12/2022</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>VTYS</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>19/12/2022</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>VTYS</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>12/12/2022</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>VTYS</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QPushButton" name="delete_course_btn">
+                  <property name="text">
+                   <string>Delete</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="update_course_btn">
+                  <property name="text">
+                   <string>Update</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="students_page">
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QPushButton" name="add_new_student_btn">
+                <property name="minimumSize">
+                 <size>
+                  <width>250</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>250</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Add New Student</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_10">
+                <item>
+                 <widget class="QTreeWidget" name="students_treeWidget">
+                  <property name="minimumSize">
+                   <size>
+                    <width>502</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="maximumSize">
                    <size>
-                    <width>250</width>
+                    <width>16777215</width>
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="selectionMode">
+                   <enum>QAbstractItemView::MultiSelection</enum>
+                  </property>
+                  <property name="sortingEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>Name</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Surname</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Student No</string>
+                   </property>
+                  </column>
                  </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_7">
+                  <item>
+                   <widget class="QPushButton" name="delete_student_btn">
+                    <property name="text">
+                     <string>Delete</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="update_student_btn">
+                    <property name="text">
+                     <string>Update</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label">
+                    <property name="maximumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Select Course:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="4">
+                   <widget class="QPushButton" name="add_students_to_course_btn">
+                    <property name="minimumSize">
+                     <size>
+                      <width>250</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>250</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Add</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="4">
+                   <widget class="QComboBox" name="select_course_comboBox"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_2">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <weight>50</weight>
+                      <bold>false</bold>
+                      <kerning>true</kerning>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Add selected students to course</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -529,22 +837,12 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="add_student_to_course_page">
-             <layout class="QVBoxLayout" name="verticalLayout_16">
+            <widget class="QWidget" name="take_attendance_page">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <layout class="QGridLayout" name="gridLayout_12">
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_54">
-                  <property name="text">
-                   <string>Course Name:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QComboBox" name="astc_student_no_comboBox"/>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="astc_course_name_lineEdit">
+               <layout class="QGridLayout" name="gridLayout_2">
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="lesson_id_comboBox">
                   <property name="maximumSize">
                    <size>
                     <width>250</width>
@@ -554,104 +852,113 @@
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QLabel" name="label_52">
+                 <widget class="QLabel" name="label_12">
                   <property name="maximumSize">
                    <size>
-                    <width>120</width>
+                    <width>175</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>Student No:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QPushButton" name="add_student_to_course_btn">
-                  <property name="text">
-                   <string>Add Student To Course</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-            <widget class="QWidget" name="take_attendance_page">
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="take_attendance_btn">
-                  <property name="maximumSize">
-                   <size>
-                    <width>250</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Take Attendance</string>
+                   <string>Scan students ID numbers:</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_13">
                   <property name="text">
-                   <string>Lesson Name</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QComboBox" name="ta_lesson_name_comboBox">
-                  <property name="maximumSize">
-                   <size>
-                    <width>250</width>
-                    <height>16777215</height>
-                   </size>
+                   <string>Lesson ID</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <layout class="QHBoxLayout" name="horizontalLayout_6">
-                  <item>
-                   <widget class="QLineEdit" name="ta_tc_lineEdit">
-                    <property name="maximumSize">
-                     <size>
-                      <width>175</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="scan_tc_btn">
-                    <property name="maximumSize">
-                     <size>
-                      <width>67</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string>Scan</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_12">
+                 <widget class="QPushButton" name="scan_tc_btn">
                   <property name="maximumSize">
                    <size>
-                    <width>50</width>
+                    <width>16777215</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>TC:</string>
+                   <string>Scan</string>
                   </property>
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QTreeWidget" name="attendance_treeWidget">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="sortingEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <column>
+                   <property name="text">
+                    <string>Lesson ID</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Lesson Date</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Lesson Name</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Student Name</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Student Surname</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Student TC</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Student No</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QPushButton" name="take_attendance_btn">
+                <property name="minimumSize">
+                 <size>
+                  <width>250</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>250</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+                <property name="text">
+                 <string>Take Attendance</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -679,7 +986,7 @@
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="ti_tc_no_lineEdit">
                   <property name="enabled">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="maximumSize">
                    <size>
@@ -754,7 +1061,7 @@
                 <item row="1" column="1">
                  <widget class="QLineEdit" name="ti_name_lineEdit">
                   <property name="enabled">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="maximumSize">
                    <size>
@@ -767,7 +1074,7 @@
                 <item row="2" column="1">
                  <widget class="QLineEdit" name="ti_lastname_lineEdit">
                   <property name="enabled">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="maximumSize">
                    <size>
@@ -803,6 +1110,12 @@
                </layout>
               </item>
              </layout>
+            </widget>
+            <widget class="QWidget" name="page">
+             <layout class="QVBoxLayout" name="verticalLayout_6"/>
+            </widget>
+            <widget class="QWidget" name="page_2">
+             <layout class="QVBoxLayout" name="verticalLayout_16"/>
             </widget>
            </widget>
           </item>
