@@ -32,8 +32,9 @@ class BackendAPI():
                 self.active_user = t
                 query_result = self.db.get_user_courses()
                 if query_result is not None: 
-                    t.set_course_attributes(query_result)
+                    self.active_user.set_course_attributes(query_result)
                     print('course info retrieved')
+                return self.active_user
             else:
                 print('Username or password not found') 
                 
@@ -75,10 +76,6 @@ class BackendAPI():
         else:
             return
         
-    def new_user_creation(self):
-        return
-    def add_lesson(self):
-        return
     def add_course_list(self, course_list):
         if self.active_user is None:
             print('add_course_list: No logged in user')
@@ -237,7 +234,7 @@ if __name__ == '__main__':
     backend_session = BackendAPI()
     query_result = backend_session.db.show_all_rows('attendance')
     print(query_result)
-    backend_session.authenticate_login(['admin12345', 'pass12345'])
-    backend_session.add_attendance_list(1, ['99951326666'])
+    print(backend_session.authenticate_login(['admin12345', 'pass12345']))
+    #backend_session.add_attendance_list(1, ['99951326666'])
  
     

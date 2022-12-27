@@ -49,6 +49,8 @@ class Teacher(Record):
         self.lastname = None
         self.tc = None
         self.course_list = {}
+    def __repr__(self) -> str:
+        return str(self.id)+','+str(self.firstname)+','+str(self.lastname)+','+str(self.tc)
     def init_attributes(self, id):
 
         firstname = input('Enter your first name: ')
