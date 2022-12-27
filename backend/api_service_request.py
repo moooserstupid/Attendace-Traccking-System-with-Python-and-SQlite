@@ -40,7 +40,7 @@ if __name__ == '__main__':
             lastname = message_tokens[4]
             tc = message_tokens[5]
             server.backend()
-            server.send()
+            server.send('')
 
 
 
