@@ -130,14 +130,22 @@ def insert_course_student_table(id, courseid, studentid):
                             {'id': id,
                             'courseid': courseid, 
                             'studentid': studentid})
-
+def fix_blob():
+    
+        c.execute('''UPDATE member
+                    SET username = CAST(username AS TEXT)
+                    WHERE typeof(username) = 'blob'; ''')
+        conn.commit()
+        conn.close()
 def db_master():
     t = db_classes.Teacher()
     c = db_classes.Course()
     t.set_teacher_attributes([1, 'Ali', 'Asghar', '9995132222'])
     c.set_attributes([1, 'Introduction to Audio Sampling', 1, None, datetime(2022 , 12, 20), datetime(2023, 1, 1), 11])
     #insert_teacher_table(t)
-    insert_login_table(1, 'admin12345', 'pass12345', 1)
+    username = 'admin12345'
+    password = 'pass12345'
+    insert_login_table(1, username, password, 1)
     insert_course_table(c)
 
     return
@@ -149,4 +157,5 @@ create_student_table()
 create_attendance_table()
 create_student_course_table()
 
-db_master()
+#db_master()
+fix_blob()

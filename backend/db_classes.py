@@ -90,13 +90,28 @@ class Course(Record):
         self.start_date = course_info[4]
         self.end_date = course_info[5]
         self.total_lesson_count = course_info[6]
+    def get_attributes(self):
+        if self.id is None:
+            print('get_attributes: course attributes not set')
+            return []
+        return_list = []
+        return_list.append(self.id)
+        return_list.append(self.name)
+        return_list.append(self.teacherid)
+        return_list.append(self.description)
+        return_list.append(self.start_date)
+        return_list.append(self.end_date)
+        return_list.append(self.total_lesson_count)
+        return return_list
+        
+
 class Lesson(Record):
 
     def __init__(self):
         self.date = None
         self.courseid = None
 
-class Attendace(Record):
+class Attendance(Record):
     def __init__(self):
 
         self.lessonid = None
@@ -112,3 +127,9 @@ class Student(Record):
         return
     def add_course(self, course):
         self.course_list[course.id] = course
+
+class Course_Student(Record):
+    def __init__(self):
+        self.courseid = None
+        self.studentid = None
+    
