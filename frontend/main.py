@@ -12,8 +12,6 @@ from MainWindow import Ui_MainWindow
 from Dashboard import Ui_DashboardWindow
 
 
-
-
 class MainWindow(QMainWindow):
     global dashboard_window
     def __init__(self):
@@ -40,9 +38,8 @@ class MainWindow(QMainWindow):
         else:
             print("username: ", username)
             print("password: ", password)
-            self.api.send('Q1,'+username+','+password)
-            print("amq")
 
+            self.api.send('Q1,'+username+','+password)
             server_reply = self.api.receive()
             print(server_reply)
             if server_reply[0] == "R1":
@@ -51,7 +48,9 @@ class MainWindow(QMainWindow):
                 else:
                     print("success")
                     mainWindow.close()
-                    dashboard_window = DashboardWindow(server_reply)
+                    server_reply.append(username)
+                    server_reply.append(password)
+                    dashboard_window = DashboardWindow(server_reply[2:])
 
 
     def sign_up(self):
@@ -87,9 +86,20 @@ class DashboardWindow(QMainWindow):
 
     def __init__(self, user):
         QMainWindow.__init__(self)
+        self.api = RequestSendAPI()
         self.ui = Ui_DashboardWindow()
         self.ui.setupUi(self)
         self.active_user = user
+        print(self.active_user)
+
+        # Teacher Info
+        self.ui.ti_tc_no_lineEdit.setText(self.active_user[2])
+        self.ui.ti_name_lineEdit.setText(self.active_user[0])
+        self.ui.ti_lastname_lineEdit.setText(self.active_user[1])
+        self.ui.ti_username_lineEdit.setText(self.active_user[3])
+        self.ui.ti_password_lineEdit.setText(self.active_user[4])
+
+        self.ui.welcome_label.setText("Welcome " + self.active_user[0] + " " + self.active_user[1])
 
         # Switch Pages
         self.ui.dashboard_menu_btn.clicked.connect(
@@ -116,6 +126,8 @@ class DashboardWindow(QMainWindow):
         self.ui.add_students_to_course_btn.clicked.connect(self.add_students_to_course_btn)
         self.ui.scan_tc_btn.clicked.connect(self.scan_students_tc)
         self.ui.sign_out_btn.clicked.connect(self.sign_out)
+        self.ui.update_teacher_info_btn.clicked.connect(self.update_teacher_info)
+
 
         # Set Combo Boxes Data
         teachers = ["Mo", "Ali", "Eren", "Emirhan"]
@@ -131,6 +143,13 @@ class DashboardWindow(QMainWindow):
         self.ui.start_date_dateEdit.setDate(current_date)
         self.ui.end_date_dateEdit.setDate(current_date)
         self.ui.lesson_date_dateEdit.setDate(current_date)
+
+        # Set Courses tree widget values
+        self.api.send('Q4,course')
+        server_reply = self.api.receive()
+        print(server_reply)
+        # for r in server_reply:
+        #     print(r)
 
         self.show()
 
@@ -205,6 +224,14 @@ class DashboardWindow(QMainWindow):
         print("Scanned students TC numbers:")
         for tc in scanned_tc_nums:
             print(tc)
+
+    def update_teacher_info(self):
+        old_username = self.active_user[3]
+        self.active_user[3] = self.ui.ti_username_lineEdit.text()
+        self.active_user[4] = self.ui.ti_password_lineEdit.text()
+        self.api.send("Q3,"+old_username+','+self.active_user[3]+','+self.active_user[4])
+
+        print("updated successfully")
 
     def sign_out(self):
         self.close()
