@@ -5,13 +5,14 @@ from PyQt5.QtCore import QDateTime, Qt, QDate
 from PyQt5.QtWidgets import QMainWindow
 
 from BarcodeScannerWebcam import BarcodeScanner
+from api_request_send import RequestSendAPI
 
 # GUI FILE
 from MainWindow import Ui_MainWindow
 from Dashboard import Ui_DashboardWindow
 
 
-# from backend.api_request_service import RequestServiceAPI
+from backend.api_backend import BackendAPI
 
 
 class MainWindow(QMainWindow):
@@ -19,7 +20,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
-        # self.api = RequestServiceAPI()
+        self.api = RequestSendAPI()
+        self.backend = BackendAPI()
 
         self.ui.setupUi(self)
 
@@ -40,12 +42,15 @@ class MainWindow(QMainWindow):
         else:
             print("username: ", username)
             print("password: ", password)
+            self.api.send('Q1,'+username+','+password)
+            server_reply = self.api.receive()
+            if server_reply[0] == "R1":
+                if server_reply[1] == 'None':
+                    print("Login Failed ")
+                else:
+                    mainWindow.close()
+                    dashboard_window = DashboardWindow(server_reply)
 
-            # if self.api.authenticate_login():
-            #     mainWindow.close()
-            #     self.dashboardWindow = DashboardWindow()
-            mainWindow.close()
-            dashboard_window = DashboardWindow()
 
     def sign_up(self):
         tc = self.ui.signup_tc_input.text()
@@ -76,10 +81,13 @@ class MainWindow(QMainWindow):
 
 
 class DashboardWindow(QMainWindow):
-    def __init__(self):
+    global active_user
+
+    def __init__(self, user):
         QMainWindow.__init__(self)
         self.ui = Ui_DashboardWindow()
         self.ui.setupUi(self)
+        self.active_user = user
 
         # Switch Pages
         self.ui.dashboard_menu_btn.clicked.connect(
