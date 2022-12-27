@@ -235,6 +235,7 @@ if __name__ == '__main__':
     query_result = backend_session.db.show_all_rows('attendance')
     print(query_result)
     print(backend_session.authenticate_login(['admin12345', 'pass12345']))
+    print(backend_session.authenticate_login(['mosalah1', 'pass123']))
     #backend_session.add_attendance_list(1, ['99951326666'])
  
     

@@ -2,6 +2,8 @@ import time
 import zmq
 import api_backend
 
+from db_manager import DBManager
+
 class ServiceRequestAPI():
     def __init__(self):
         self.context = zmq.Context()
@@ -12,11 +14,12 @@ class ServiceRequestAPI():
         message = message.encode('ascii')
         server.socket.send(message)
     def recieve(self):
-        return server.socket.recv_string()
+        return server.socket.recv().decode()
 
 
 if __name__ == '__main__':
     server = ServiceRequestAPI()
+    db = DBManager()
     while True:
         print("Server Running")
         message = server.recieve()
@@ -46,6 +49,23 @@ if __name__ == '__main__':
             tc = message_tokens[5]
             server.backend()
             server.send('')
+        elif message_tokens[0] == 'Q3':
+            # Update username and password
+            old_username = message_tokens[1]
+            new_username = message_tokens[2]
+            new_password = message_tokens[3]
+            db.update_teacher_info(old_username, new_username, new_password)
+            # server.send("R3,")
+        elif message_tokens[0] == 'Q4':
+            # Show Rows From Tabel
+            tabel_name = message_tokens[1]
+            rows = db.show_all_rows(tabel_name)
+            server.send(rows.__repr__())
+
+
+
+
+
 
 
 

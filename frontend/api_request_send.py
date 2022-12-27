@@ -19,18 +19,9 @@ class RequestSendAPI:
         message_tokens = None
         try:
             message = self.socket.recv_string()
-            print("Received reply [ %s ]" % (message))
+            # print("Received reply [ %s ]" % (message))
             message_tokens = message.split(',')
         except Exception as e:
             print(e)
-        print("recv")
         return message_tokens
-
-
-if __name__ == '__main__':
-    client = RequestSendAPI()
-
-    print("Sending request %s" % client.request)
-    client.send("Q1,mosalah,123")
-    client.receive()
 
