@@ -256,7 +256,7 @@
           <item>
            <widget class="QStackedWidget" name="stackedWidget">
             <property name="currentIndex">
-             <number>6</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="dashboard_page">
              <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -329,7 +329,7 @@
              <layout class="QVBoxLayout" name="verticalLayout_29">
               <item>
                <layout class="QGridLayout" name="gridLayout">
-                <item row="5" column="0">
+                <item row="4" column="0">
                  <widget class="QLabel" name="label_14">
                   <property name="maximumSize">
                    <size>
@@ -342,29 +342,11 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="course_description_lineEdit">
-                  <property name="maximumSize">
-                   <size>
-                    <width>250</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                 </widget>
+                <item row="5" column="1">
+                 <widget class="QDateEdit" name="end_date_dateEdit"/>
                 </item>
-                <item row="6" column="0">
-                 <widget class="QLabel" name="label_15">
-                  <property name="text">
-                   <string>End Date:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="8" column="1">
-                 <widget class="QPushButton" name="add_course_btn">
-                  <property name="text">
-                   <string>Add Course</string>
-                  </property>
-                 </widget>
+                <item row="4" column="1">
+                 <widget class="QDateEdit" name="start_date_dateEdit"/>
                 </item>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="course_name_lineEdit">
@@ -382,16 +364,6 @@
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
-                 <widget class="QDateEdit" name="end_date_dateEdit"/>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_8">
-                  <property name="text">
-                   <string>Teacher Name:</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_7">
                   <property name="maximumSize">
@@ -406,17 +378,18 @@
                  </widget>
                 </item>
                 <item row="7" column="1">
-                 <widget class="QSpinBox" name="total_lesson_count_spinBox"/>
+                 <widget class="QPushButton" name="add_course_btn">
+                  <property name="text">
+                   <string>Add Course</string>
+                  </property>
+                 </widget>
                 </item>
-                <item row="7" column="0">
+                <item row="6" column="0">
                  <widget class="QLabel" name="label_16">
                   <property name="text">
                    <string>Total Lesson Count</string>
                   </property>
                  </widget>
-                </item>
-                <item row="5" column="1">
-                 <widget class="QDateEdit" name="start_date_dateEdit"/>
                 </item>
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_9">
@@ -425,8 +398,25 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
-                 <widget class="QComboBox" name="teacher_name_comboBox"/>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>End Date:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="course_description_lineEdit">
+                  <property name="maximumSize">
+                   <size>
+                    <width>250</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QSpinBox" name="total_lesson_count_spinBox"/>
                 </item>
                </layout>
               </item>
