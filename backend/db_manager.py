@@ -380,13 +380,16 @@ class DBManager():
             {'value1': new_username, 'value2': new_password, 'value3': old_username})
         self.c.fetchone()
         self.disconnect_db()
+    def join_tabels(self, tabel1, id1, tabel2, id2):
+        self.connect_db()
+        self.c.execute('''
+        SELECT * FROM {} INNER JOIN {} ON {}.{} = {}.{}'''.format(
+            tabel1, tabel2, tabel1, id1, tabel2, id2))
+        result = self.c.fetchone()
+        self.disconnect_db()
+        return result
 if __name__ == '__main__':
     db = DBManager()
-    # db.update_teacher_info("mosalah", "mosalah", "mosalah123")
-    # print(db.user_login("mosalah", "pass123"))
-    # print(db.user_login("admin12345", "pass12345"))
-    rows = db.show_all_rows("course")
-    for row in rows:
-        print(row)
 
-        
+    print(db.join_tabels("attendance", "lessonid", "lesson", "id"))
+
