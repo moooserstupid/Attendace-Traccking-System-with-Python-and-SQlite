@@ -130,33 +130,14 @@ class DashboardWindow(QMainWindow):
         self.ui.scan_tc_btn.clicked.connect(self.scan_students_tc)
         self.ui.sign_out_btn.clicked.connect(self.sign_out)
         self.ui.update_teacher_info_btn.clicked.connect(self.update_teacher_info)
+        self.ui.take_attendance_btn.clicked.connect(self.take_attendance)
 
-        # Set Combo Boxes Data
-        self.api.send("Q8,teacher,firstname")
-        server_reply = self.api.receive()
-        teachers = []
-        # teachers = ["Mo", "Ali", "Eren", "Emirhan"]
-        if server_reply[0] == "R8":
-            teachers = server_reply[1].split(';')
+        course_names = self.get_tabel_column_values("course", 1)
+        lesson_ids = self.get_tabel_column_values("lesson", 0)
 
-        self.api.send("Q8,course,name")
-        server_reply = self.api.receive()
-        courses = []
-        # courses = ["DBMS", "Microcontroller", "Programming"]
-        if server_reply[0] == "R8":
-            courses = server_reply[1].split(';')
-
-        self.api.send("Q8,lesson,id")
-        server_reply = self.api.receive()
-        lessons = []
-        # lessons = ['1', '2', '3', '4', '5']
-        if server_reply[0] == "R8":
-            lessons = server_reply[1].split(';')
-
-        self.ui.teacher_name_comboBox.addItems(teachers)
-        self.ui.course_id_comboBox.addItems(courses)
-        self.ui.select_course_comboBox.addItems(courses)
-        self.ui.lesson_id_comboBox.addItems(lessons)
+        self.ui.course_id_comboBox.addItems(course_names)
+        self.ui.select_course_comboBox.addItems(course_names)
+        self.ui.lesson_id_comboBox.addItems(lesson_ids)
 
         # Set Date Edits to today's date
         current_date = QDate().currentDate()
@@ -215,15 +196,24 @@ class DashboardWindow(QMainWindow):
 
             QTreeWidgetItem(self.ui.lessons_treeWidget, row)
     def show_tabel_on_tree_widget(self, tabel_name, treeWidget):
+        rows = self.get_tabel_values(tabel_name)
+        for row in rows:
+            QTreeWidgetItem(treeWidget, row[1:])
+    def get_tabel_values(self, tabel_name):
         self.api.send('Q4,'+tabel_name)
         server_reply = self.api.receive()
         rows = []
         for i in range(1, len(server_reply)):
             r = server_reply[i].split(';')
             rows.append(r)
+        return rows
+    def get_tabel_column_values(self, tabel_name, column_index):
+        rows = self.get_tabel_values(tabel_name)
         print(rows)
+        column_values = []
         for row in rows:
-            QTreeWidgetItem(treeWidget, row[1:])
+            column_values.append(row[column_index])
+        return column_values
     def switch_page(self, page, page_name):
         self.ui.page_name_label.setText(page_name)
         self.ui.stackedWidget.setCurrentWidget(page)
@@ -231,7 +221,7 @@ class DashboardWindow(QMainWindow):
     def add_course(self):
         course_name = self.ui.course_name_lineEdit.text()
         course_description = self.ui.course_description_lineEdit.text()
-        teacher_name = self.ui.teacher_name_comboBox.currentText()
+        # teacher_name = self.ui.teacher_name_comboBox.currentText()
         start_date = self.ui.start_date_dateEdit.text()
         end_date = self.ui.end_date_dateEdit.text()
         total_lesson_count = self.ui.total_lesson_count_spinBox.text()
@@ -240,12 +230,12 @@ class DashboardWindow(QMainWindow):
         self.ui.course_description_lineEdit.clear()
         self.ui.total_lesson_count_spinBox.clear()
 
-        if course_name == '' or course_description == '' or teacher_name == '' \
-                or start_date == '' or end_date == '' or total_lesson_count == '':
+        if course_name == '' or course_description == '' or start_date == ''\
+                or end_date == '' or total_lesson_count == '':
             print("fields cannot be empty")
         else:
-            self.api.send(f"Q6,course,{course_name};{course_description};{teacher_name};"
-                          f"{start_date};{end_date};{total_lesson_count}")
+            self.api.send(f"Q6,{course_name},{course_description},"
+                          f"{start_date},{end_date},{total_lesson_count}")
             server_reply = self.api.receive()
             if server_reply[0] == "R6":
                 if server_reply[1] == "success":
@@ -260,9 +250,9 @@ class DashboardWindow(QMainWindow):
         if lesson_date == '' or course_id == '':
             print("fields cannot be empty")
         else:
-            self.api.send(f"Q6,lesson,{lesson_date};{course_id}")
+            self.api.send(f"Q7,{lesson_date},{course_id}")
             server_reply = self.api.receive()
-            if server_reply[0] == "R6":
+            if server_reply[0] == "R7":
                 if server_reply[1] == "success":
                     print("Lesson added successfully")
                 elif server_reply[1] == "failed":
@@ -278,10 +268,10 @@ class DashboardWindow(QMainWindow):
                 or student_no == '':
             print("fields cannot be empty")
         else:
-            self.api.send(f"Q6,student,{student_tc};{student_name};{student_lastname};"
-                          f"{student_no}")
+            self.api.send(f"Q8,{student_no},{student_name},{student_lastname},"
+                          f"{student_tc}")
             server_reply = self.api.receive()
-            if server_reply[0] == "R6":
+            if server_reply[0] == "R8":
                 if server_reply[1] == "success":
                     print("Student added successfully")
                 elif server_reply[1] == "failed":
@@ -295,9 +285,9 @@ class DashboardWindow(QMainWindow):
         else:
             for student in selected_students:
                 print("Selected Students: ", student.text(0))
-                self.api.send(f"Q6,course_student,{selected_course},{student.text(0)}")
+                self.api.send(f"Q9,{selected_course},{student.text(0)}")
                 server_reply = self.api.receive()
-                if server_reply[0] == "R6":
+                if server_reply[0] == "R9":
                     if server_reply[1] == "success":
                         print("Course added to selected students successfully")
                     elif server_reply[1] == "failed":
@@ -309,6 +299,20 @@ class DashboardWindow(QMainWindow):
         selected_lesson_id = self.ui.lesson_id_comboBox.currentText()
         for tc in scanned_tc_nums:
             QTreeWidgetItem(self.ui.attendance_treeWidget, [selected_lesson_id, tc])
+
+    def take_attendance(self):
+        attendance_root = self.ui.attendance_treeWidget.invisibleRootItem()
+        child_count = attendance_root.childCount()
+        for i in range(child_count):
+            item = attendance_root.child(i)
+            self.api.send(f"Q10,{item.text(0)},{item.text(1)}")
+            server_reply = self.api.receive()
+            if server_reply[0] == "Q10":
+                if server_reply[1] == "success":
+                    print("Course added to selected students successfully")
+                elif server_reply[1] == "failed":
+                    print("Failed to add selected students to course")
+            # print(item.text(0), item.text(1))
 
     def update_teacher_info(self):
         old_username = self.active_user[3]
