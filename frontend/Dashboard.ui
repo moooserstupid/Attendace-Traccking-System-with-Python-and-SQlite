@@ -256,7 +256,7 @@
           <item>
            <widget class="QStackedWidget" name="stackedWidget">
             <property name="currentIndex">
-             <number>7</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="dashboard_page">
              <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -550,48 +550,11 @@
                   <string>Teacher Name</string>
                  </property>
                 </column>
-                <item>
+                <column>
                  <property name="text">
-                  <string>26/12/2022</string>
+                  <string>Teacher Last Name</string>
                  </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>VTYS</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>19/12/2022</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>VTYS</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>12/12/2022</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>VTYS</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                </item>
+                </column>
                </widget>
               </item>
               <item>
@@ -659,6 +622,11 @@
                   </property>
                   <column>
                    <property name="text">
+                    <string>Student No</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
                     <string>Name</string>
                    </property>
                   </column>
@@ -670,11 +638,6 @@
                   <column>
                    <property name="text">
                     <string>ID</string>
-                   </property>
-                  </column>
-                  <column>
-                   <property name="text">
-                    <string>Student No</string>
                    </property>
                   </column>
                  </widget>
@@ -924,7 +887,7 @@
                   </column>
                   <column>
                    <property name="text">
-                    <string>Lesson Name</string>
+                    <string>Course Name</string>
                    </property>
                   </column>
                   <column>
@@ -971,6 +934,77 @@
                 <property name="text">
                  <string>Take Attendance</string>
                 </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignRight">
+               <widget class="QPushButton" name="all_attendaces_btn">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>View All Attendances</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="all_attendances_page">
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QTreeWidget" name="all_attendances_treeWidget">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
+                </property>
+                <column>
+                 <property name="text">
+                  <string>Lesson ID</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Lesson Date</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Course Name</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Student Name</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Student Surname</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Student TC</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Student No</string>
+                 </property>
+                </column>
                </widget>
               </item>
              </layout>
@@ -1123,9 +1157,6 @@
                </layout>
               </item>
              </layout>
-            </widget>
-            <widget class="QWidget" name="page">
-             <layout class="QVBoxLayout" name="verticalLayout_6"/>
             </widget>
             <widget class="QWidget" name="page_2">
              <layout class="QVBoxLayout" name="verticalLayout_16"/>

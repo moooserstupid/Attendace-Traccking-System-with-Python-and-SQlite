@@ -2,7 +2,7 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QDateTime, Qt, QDate
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QTreeWidgetItem
 
 from BarcodeScannerWebcam import BarcodeScanner
 from api_request_send import RequestSendAPI
@@ -89,6 +89,7 @@ class DashboardWindow(QMainWindow):
         self.api = RequestSendAPI()
         self.ui = Ui_DashboardWindow()
         self.ui.setupUi(self)
+
         self.active_user = user
         print(self.active_user)
 
@@ -116,6 +117,8 @@ class DashboardWindow(QMainWindow):
             lambda: self.switch_page(self.ui.add_student_page, "Add Student"))
         self.ui.take_attendance_menu_btn.clicked.connect(
             lambda: self.switch_page(self.ui.take_attendance_page, "Take Attendance"))
+        self.ui.all_attendaces_btn.clicked.connect(
+            lambda: self.switch_page(self.ui.all_attendances_page, "All Attendances"))
         self.ui.teacher_info_menu_btn.clicked.connect(
             lambda: self.switch_page(self.ui.teacher_info_page, "Teacher Info"))
 
@@ -144,15 +147,66 @@ class DashboardWindow(QMainWindow):
         self.ui.end_date_dateEdit.setDate(current_date)
         self.ui.lesson_date_dateEdit.setDate(current_date)
 
-        # Set Courses tree widget values
-        self.api.send('Q4,course')
-        server_reply = self.api.receive()
-        print(server_reply)
-        # for r in server_reply:
-        #     print(r)
+        self.show_tabel_on_tree_widget("course", self.ui.courses_treeWidget)
+        self.show_tabel_on_tree_widget("student", self.ui.students_treeWidget)
+        self.show_tabel_on_tree_widget("attendance", self.ui.all_attendances_treeWidget)
+        self.show_lessons_tabel()
+        # self.show_attendance_tabel()
 
         self.show()
 
+    def show_lessons_tabel(self):
+        self.api.send('Q4,lesson')
+        server_reply = self.api.receive()
+        rows = []
+        for i in range(1, len(server_reply)):
+            r = server_reply[i].split(';')
+            rows.append(r)
+        for row in rows:
+            self.api.send('Q5,course,' + row[2])
+            server_reply = self.api.receive()
+            data = server_reply[2:4]
+            row = row[1:]
+            row.extend(data)
+
+            self.api.send('Q5,teacher,' + row[3])
+            server_reply = self.api.receive()
+            data = server_reply[2:4]
+            row.extend(data)
+
+            QTreeWidgetItem(self.ui.lessons_treeWidget, row)
+    def show_attendance_tabel(self):
+        self.api.send('Q4,attendance')
+        server_reply = self.api.receive()
+        rows = []
+        for i in range(1, len(server_reply)):
+            r = server_reply[i].split(';')
+            rows.append(r)
+        print(rows)
+        for row in rows:
+            self.api.send('Q5,lesson,' + row[1])
+            server_reply = self.api.receive()
+            print(server_reply)
+            data = server_reply[2:4]
+            row = row[1:]
+            row.extend(data)
+            self.api.send('Q5,student,' + row[2])
+            server_reply = self.api.receive()
+            print(server_reply)
+            data = server_reply[2:4]
+            row.extend(data)
+
+            QTreeWidgetItem(self.ui.lessons_treeWidget, row)
+    def show_tabel_on_tree_widget(self, tabel_name, treeWidget):
+        self.api.send('Q4,'+tabel_name)
+        server_reply = self.api.receive()
+        rows = []
+        for i in range(1, len(server_reply)):
+            r = server_reply[i].split(';')
+            rows.append(r)
+        print(rows)
+        for row in rows:
+            QTreeWidgetItem(treeWidget, row[1:])
     def switch_page(self, page, page_name):
         self.ui.page_name_label.setText(page_name)
         self.ui.stackedWidget.setCurrentWidget(page)
@@ -173,13 +227,14 @@ class DashboardWindow(QMainWindow):
                 or start_date == '' or end_date == '' or total_lesson_count == '':
             print("fields cannot be empty")
         else:
-            print("Course added successfully")
-            print("Course Name        : ", course_name)
-            print("Course Description : ", course_description)
-            print("Teacher Name       : ", teacher_name)
-            print("Start Date         : ", start_date)
-            print("End Date           : ", end_date)
-            print("Total Lesson Count : ", total_lesson_count)
+            self.api.send(f"Q6,course,{course_name};{course_description};{teacher_name};"
+                          f"{start_date};{end_date};{total_lesson_count}")
+            server_reply = self.api.receive()
+            if server_reply[0] == "R6":
+                if server_reply[1] == "success":
+                    print("Course added successfully")
+                elif server_reply[1] == "failed":
+                    print("Failed to add course")
 
     def add_lesson(self):
         lesson_date = self.ui.lesson_date_dateEdit.text()
@@ -188,9 +243,13 @@ class DashboardWindow(QMainWindow):
         if lesson_date == '' or course_id == '':
             print("fields cannot be empty")
         else:
-            print("Lesson added successfully")
-            print("Lesson Date : ", lesson_date)
-            print("Course Id   : ", course_id)
+            self.api.send(f"Q6,lesson,{lesson_date};{course_id}")
+            server_reply = self.api.receive()
+            if server_reply[0] == "R6":
+                if server_reply[1] == "success":
+                    print("Lesson added successfully")
+                elif server_reply[1] == "failed":
+                    print("Failed to add lesson")
 
     def add_student(self):
         student_tc = self.ui.student_tc_no_lineEdit.text()
@@ -202,11 +261,14 @@ class DashboardWindow(QMainWindow):
                 or student_no == '':
             print("fields cannot be empty")
         else:
-            print("Student added successfully")
-            print("Student TC No   : ", student_tc)
-            print("Student Name    : ", student_name)
-            print("Student Lastname: ", student_lastname)
-            print("Student No      : ", student_no)
+            self.api.send(f"Q6,student,{student_tc};{student_name};{student_lastname};"
+                          f"{student_no}")
+            server_reply = self.api.receive()
+            if server_reply[0] == "R6":
+                if server_reply[1] == "success":
+                    print("Student added successfully")
+                elif server_reply[1] == "failed":
+                    print("Failed to add student")
 
     def add_students_to_course_btn(self):
         selected_students = self.ui.students_treeWidget.selectedItems()
@@ -214,16 +276,22 @@ class DashboardWindow(QMainWindow):
         if len(selected_students) == 0 or selected_course == '':
             print("You must select at least one student")
         else:
-            print("Course added to selected students successfully")
-            print("Selected Students: ", selected_students)
-            print("Selected Course  : ", selected_course)
+            for student in selected_students:
+                print("Selected Students: ", student.text(0))
+                self.api.send(f"Q6,course_student,{selected_course},{student.text(0)}")
+                server_reply = self.api.receive()
+                if server_reply[0] == "R6":
+                    if server_reply[1] == "success":
+                        print("Course added to selected students successfully")
+                    elif server_reply[1] == "failed":
+                        print("Failed to add selected students to course")
 
     def scan_students_tc(self):
         scanner = BarcodeScanner()
         scanned_tc_nums = scanner.scan_tc()
-        print("Scanned students TC numbers:")
+        selected_lesson_id = self.ui.lesson_id_comboBox.currentText()
         for tc in scanned_tc_nums:
-            print(tc)
+            QTreeWidgetItem(self.ui.attendance_treeWidget, [selected_lesson_id, tc])
 
     def update_teacher_info(self):
         old_username = self.active_user[3]

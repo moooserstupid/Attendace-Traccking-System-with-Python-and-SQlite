@@ -60,7 +60,25 @@ if __name__ == '__main__':
             # Show Rows From Tabel
             tabel_name = message_tokens[1]
             rows = db.show_all_rows(tabel_name)
-            server.send(rows.__repr__())
+            data = ""
+            for row in rows:
+                for r in row:
+                    data += str(r) + ";"
+                data = data[:-1]
+                data += ','
+            data = data[:-1]
+            server.send("R4,"+data)
+
+        elif message_tokens[0] == 'Q5':
+            # Get row from id
+            tabel_name = message_tokens[1]
+            column_id = message_tokens[2]
+            data = ""
+            row = db.get_row_from_id(tabel_name, column_id)
+            for r in row:
+                data += str(r) + ","
+            data = data[:-1]
+            server.send("R5,"+data)
 
 
 
