@@ -131,11 +131,28 @@ class DashboardWindow(QMainWindow):
         self.ui.sign_out_btn.clicked.connect(self.sign_out)
         self.ui.update_teacher_info_btn.clicked.connect(self.update_teacher_info)
 
-
         # Set Combo Boxes Data
-        teachers = ["Mo", "Ali", "Eren", "Emirhan"]
-        courses = ["DBMS", "Microcontroller", "Programming"]
-        lessons = ['1', '2', '3', '4', '5']
+        self.api.send("Q8,teacher,firstname")
+        server_reply = self.api.receive()
+        teachers = []
+        # teachers = ["Mo", "Ali", "Eren", "Emirhan"]
+        if server_reply[0] == "R8":
+            teachers = server_reply[1].split(';')
+
+        self.api.send("Q8,course,name")
+        server_reply = self.api.receive()
+        courses = []
+        # courses = ["DBMS", "Microcontroller", "Programming"]
+        if server_reply[0] == "R8":
+            courses = server_reply[1].split(';')
+
+        self.api.send("Q8,lesson,id")
+        server_reply = self.api.receive()
+        lessons = []
+        # lessons = ['1', '2', '3', '4', '5']
+        if server_reply[0] == "R8":
+            lessons = server_reply[1].split(';')
+
         self.ui.teacher_name_comboBox.addItems(teachers)
         self.ui.course_id_comboBox.addItems(courses)
         self.ui.select_course_comboBox.addItems(courses)
