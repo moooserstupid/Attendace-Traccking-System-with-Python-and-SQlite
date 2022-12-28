@@ -142,35 +142,42 @@ class DBManager():
         return query_result
     def add_new_user(self, username, password, firstname, lastname, tc):
         self.connect_db()
-        self.increment_last_row_dict('teacher')
-        self.increment_last_row_dict('member')
+        try:
+            self.increment_last_row_dict('teacher')
+            self.increment_last_row_dict('member')
 
-        self.c.execute('''INSERT INTO teacher VALUES
-                             (:id,
-                             :firstname, 
-                             :lastname,
-                             :tc)''', 
-                             {'id': self.last_insert_rowid_dict['teacher'],
-                             'firstname': firstname, 
-                             'lastname': lastname,
-                             'tc': tc})
-        
-        self.c.execute('''INSERT INTO member VALUES
-                             (:id,
-                             :username, 
-                             :password,
-                             :userID)''', 
-                             {'id': self.last_insert_rowid_dict['member'],
-                             'username': username, 
-                             'password': password,
-                             'userID': self.last_insert_rowid_dict['teacher']})
-        self.disconnect_db()
+            self.c.execute('''INSERT INTO teacher VALUES
+                                (:id,
+                                :firstname, 
+                                :lastname,
+                                :tc)''', 
+                                {'id': self.last_insert_rowid_dict['teacher'],
+                                'firstname': firstname, 
+                                'lastname': lastname,
+                                'tc': tc})
+            
+            self.c.execute('''INSERT INTO member VALUES
+                                (:id,
+                                :username, 
+                                :password,
+                                :userID)''', 
+                                {'id': self.last_insert_rowid_dict['member'],
+                                'username': username, 
+                                'password': password,
+                                'userID': self.last_insert_rowid_dict['teacher']})
+            return True
+        except Exception as e:
+            self.decrement_last_row_dict['teacher']
+            self.decrement_last_row_dict['member']
+            return False
+        finally:
+            self.disconnect_db()
     def add_new_course(self, name, description, start_date: date, end_date: date, total_lesson_count):
         if self.active_user is None:
             print('No active user')
             return False
         self.connect_db()
-        return_value = False
+        
         try:
             self.increment_last_row_dict('course')
             self.c.execute('''INSERT INTO course VALUES
@@ -190,14 +197,14 @@ class DBManager():
                                 'total_lesson_count': total_lesson_count})
             
             print('Course added')
-            return_value = True
+            return True
         except sqlite3.Error as err:
             print('Could not add course')
             self.decrement_last_row_dict('course')
-            return_value = False
+            return False
         finally:
             self.disconnect_db()
-            return return_value
+            
         
     def find_student(self, tc):
         if self.active_user is None:
@@ -255,9 +262,11 @@ class DBManager():
                                 'firstname': firstname,
                                 'lastname': lastname, 
                                 'tc': tc})
+            return True
         except Exception as e:
             print(sys._getframe().f_code.co_name + ': Could not insert student with id ' + studentid)
             self.decrement_last_row_dict('student')
+            return False
         finally:
             self.disconnect_db()
     def add_student_to_course(self, courseid, studentid):
@@ -276,22 +285,23 @@ class DBManager():
         return
     def add_lesson(self, date, courseid):
 
-        return_value = None
+        if self.active_user is None:
+            return False
         self.connect_db()
-        self.c.execute('''INSERT INTO lesson VALUES
-                            (:id,
-                            :date,
-                            :courseid)''',
-                            {'id': self.last_insert_rowid_dict['lesson'],
-                            'date': date,
-                            'courseid': courseid})
-        query_result = self.c.fetchone()
-        if query_result:
-            return_value = query_result
-        else:
-            return_value = None 
-        self.disconnect_db()
-        return return_value
+        try:
+            self.c.execute('''INSERT INTO lesson VALUES
+                                (:id,
+                                :date,
+                                :courseid)''',
+                                {'id': self.last_insert_rowid_dict['lesson'],
+                                'date': date,
+                                'courseid': courseid})
+            return True
+        except:
+            return False 
+        finally:
+            self.disconnect_db()
+        
     def get_row_from_value(self, table_name, column_name, value):
         return_value = None
         self.connect_db()
@@ -375,11 +385,16 @@ class DBManager():
 
     def update_teacher_info(self, old_username, new_username, new_password):
         self.connect_db()
-        self.c.execute('''
-        UPDATE member SET username= :value1, password = :value2 WHERE username = :value3''',
-            {'value1': new_username, 'value2': new_password, 'value3': old_username})
-        self.c.fetchone()
-        self.disconnect_db()
+        try:
+            self.c.execute('''
+            UPDATE member SET username= :value1, password = :value2 WHERE username = :value3''',
+                {'value1': new_username, 'value2': new_password, 'value3': old_username})
+            self.c.fetchone()
+            return True
+        except:
+            return False
+        finally:
+            self.disconnect_db()
     def join_tabels(self, tabel1, id1, tabel2, id2):
         self.connect_db()
         self.c.execute('''

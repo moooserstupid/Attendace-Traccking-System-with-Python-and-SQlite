@@ -51,8 +51,8 @@ class BackendAPI():
         firstname = signup_credentials[2]
         lastname = signup_credentials[3]
         tc = signup_credentials[4]
-        username_check = True
-        #username_check = self.username_rex.match(username)
+
+        username_check = self.username_rex.match(username)
         password_check = self.password_rex.match(password)
         firstname_check = self.name_rex.match(firstname)
         lastname_check = self.name_rex.match(lastname)
@@ -60,70 +60,78 @@ class BackendAPI():
         if firstname_check and lastname_check:
             print('authenticate_signup: names pass the vibe check')
         else:
-            return
+            return False
         if tc_check:
             print('authenticate_signup: tc cool too')
         else: 
-            return
+            return False
 
         if username_check and password_check:
             if self.db.is_unique('member', 'username', username):
                 print('authenticate_signup: username is unique')
-                self.db.add_new_user(username, password, firstname, lastname, tc)
+                return self.db.add_new_user(username, password, firstname, lastname, tc)
             else:
                 print('authenticate_signup: username is taken')
-                return
+                return False
         else:
-            return
+            return False
         
-    def add_course_list(self, course_list):
+    def add_course(self, course):
         if self.active_user is None:
             print('add_course_list: No logged in user')
-            return
-        for course in course_list:
-            name = course[0]
-            description = course[1]
-            start_date = course[2]
-            end_date = course[3]
-            total_lesson_count = course[4]
-            if self.db.add_new_course(name, description, start_date, end_date, total_lesson_count):
-                print('add_course_list: ' + name + ' added successfully!')
-            else:
-                print('add_course_list: ' + name + ' could not be added.')
-
-        return
+            return False
+        
+        name = course[0]
+        description = course[1]
+        start_date = course[2]
+        end_date = course[3]
+        total_lesson_count = course[4]
+        if self.db.add_new_course(name, description, start_date, end_date, total_lesson_count):
+            print('add_course_list: ' + name + ' added successfully!')
+            return True
+        else:
+            print('add_course_list: ' + name + ' could not be added.')
+            return False
     def edit_course_list(self, new_course_list):
         if self.active_user is None:
             print('')
         return
-    def add_lesson_list(self, lesson_list):
+    def convert_to_datetime(self, date: str):
+        date_and_time = date.split(' ')
+        date_only = date[0].split('-')
+        return datetime(int(date_only[0]), int(date_only[1]), int(date_only[2]))
+    def add_lesson(self, lesson):
         '''
         
         '''
 
         if self.active_user is None:
             print('add_lesson_list: No active user')
-            return
-        for lesson in lesson_list:
-            date = lesson[0]
-            courseid = lesson[1]
-            course_info = self.db.get_row_from_id('course', courseid)
-            print(course_info)
-            if course_info is None:
-                print('add_lesson_list: course {} has not been registered'.format(courseid))
-                return
-            start_date = course_info[4]
-            end_date = course_info[5]
+            return False
 
-            if date >= start_date and date <= end_date:
-                print('add_lesson_list: date {} is valid for course {}'.format(date, course_info[1]))
-                if self.db.is_composite_key_unique('lesson', 'date', date, 'courseid', courseid):
-                    print('composite key does not exist')
-                    self.db.add_lesson(date, courseid)
-                else:
-                    print('composite key exists')
+        date = self.convert_to_datetime(lesson[0])
+        courseid = lesson[1]
+        course_info = self.db.get_row_from_id('course', courseid)
+        print(course_info)
+        if course_info is None:
+            print('add_lesson_list: course {} has not been registered'.format(courseid))
+            return False
+        start_date = self.convert_to_datetime(course_info)[4]
+        end_date = self.convert_to_datetime(course_info[5])
+
+        if date >= start_date and date <= end_date:
+            print('add_lesson_list: date {} is valid for course {}'.format(date, course_info[1]))
+            if self.db.is_composite_key_unique('lesson', 'date', date, 'courseid', courseid):
+                print('composite key does not exist')
+                if self.db.add_lesson(date, courseid):
+                    return True
+                else: return False
             else:
-                print('add_lesson_list: date {} is invalid for course {}'.format(date, course_info[1]))
+                print('composite key exists')
+                return False
+        else:
+            print('add_lesson_list: date {} is invalid for course {}'.format(date, course_info[1]))
+            return False
     def log_out(self):
         print('add_attendance_list: No active user')
         self.active_user = None
@@ -132,68 +140,75 @@ class BackendAPI():
 
 
         
-    def add_attendance_list(self, lessonid, tc_list):
+    def add_attendance(self, lessonid, tc):
         if self.active_user is None:
             print('add_attendance_list: No active user')
-            return
+            return False
         query_result = self.db.get_row_from_id('lesson', lessonid)
         if query_result is None:
             print('That lesson session has not been created')
-            return
+            return False
 
         courseid = query_result[2]
         print(self.active_user.course_list)
         if int(courseid) not in self.active_user.course_list:
             print('That lesson session has not been created for this user')
-            return
+            return False
         
-        for tc in tc_list:
-            if self.tc_rex.match(tc):
-                query_result = self.db.get_row_from_value('student', 'tc', tc)
-                print(query_result)
-                if query_result is None:
-                    print('add_attendace_list: student with tc {} does not exist'.format(tc))
-                    continue
-                else:
-                    studentid = query_result[0][1]
-                    
-                    if self.db.is_composite_key_unique('course_student', 'courseid', courseid, 'studentid', studentid):
-                        print('student {} doesnt take course {}'.format(studentid, courseid))
-                        continue
-                    if self.db.is_composite_key_unique('attendance', 'lessonid', lessonid, 'studentid', studentid):
-                        self.db.add_attendance(lessonid, studentid)
-                    else:
-                        print('attendance for student {} with lesson {} already exists'.format(studentid, lessonid))
+        
+        if self.tc_rex.match(tc):
+            query_result = self.db.get_row_from_value('student', 'tc', tc)
+            print(query_result)
+            if query_result is None:
+                print('add_attendace_list: student with tc {} does not exist'.format(tc))
+                return False
             else:
-                print('add_attendace_list: tc {} is invalid'.format(tc))
+                studentid = query_result[0][1]
+                
+                if self.db.is_composite_key_unique('course_student', 'courseid', courseid, 'studentid', studentid):
+                    print('student {} doesnt take course {}'.format(studentid, courseid))
+                    return False
+                if self.db.is_composite_key_unique('attendance', 'lessonid', lessonid, 'studentid', studentid):
+                    if self.db.add_attendance(lessonid, studentid):
+                        return True
+                    else: return False
+                else:
+                    print('attendance for student {} with lesson {} already exists'.format(studentid, lessonid))
+                    return False
+        else:
+            print('add_attendace_list: tc {} is invalid'.format(tc))
+            return False
 
     
-    def add_student_list(self, students):
-        for student in students:
-            studentid = student[0]
-            if self.studentid_rex.match(studentid) is False:
-                print('add_student_list: this studentid does not pass the vibe check')
-                continue
-            if self.db.is_unique('student', 'studentid', studentid):
-                
-                firstname = student[1]
-                lastname = student[2]
-                if self.name_rex.match(firstname) is False or self.name_rex.match(lastname) is False:
-                    print('add_student_list: names are not cool enough.')
-                    continue
-                tc = student[3]
-                if self.db.is_unique('student', 'tc', tc) and self.db.is_unique('teacher', 'tc', tc):
+    def add_student(self, student):
+        
+        studentid = student[0]
+        if self.studentid_rex.match(studentid) is False:
+            print('add_student_list: this studentid does not pass the vibe check')
+            return False
+        if self.db.is_unique('student', 'studentid', studentid):
+            
+            firstname = student[1]
+            lastname = student[2]
+            if self.name_rex.match(firstname) is False or self.name_rex.match(lastname) is False:
+                print('add_student_list: names are not cool enough.')
+                return False
+            tc = student[3]
+            if self.db.is_unique('student', 'tc', tc) and self.db.is_unique('teacher', 'tc', tc):
 
-                    if self.tc_rex.match(tc) is False:
-                        print('add_student_list: tc {} not cool'.format(tc))
-                        continue
-                    self.db.add_new_student(studentid, firstname, lastname, tc)
-                else:
-                    print('add_student_list: tc {} already exists in our system'.format(tc))
-                    continue
+                if self.tc_rex.match(tc) is False:
+                    print('add_student_list: tc {} not cool'.format(tc))
+                    return False
+                if self.db.add_new_student(studentid, firstname, lastname, tc):
+                    return True
+                else: return False
+
             else:
-                print('add_student_list: studentid {} already exists'.format(studentid))
-                continue
+                print('add_student_list: tc {} already exists in our system'.format(tc))
+                return False
+        else:
+            print('add_student_list: studentid {} already exists'.format(studentid))
+            return False
     def add_student_to_course(self, courseid, studentid):
         if self.active_user is None:
             print('No active user')
